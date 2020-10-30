@@ -13,11 +13,12 @@ app.use(bodyParser.json());
 
 app.get('/reset', (req, res) => {
   users = {};
+  if (config.debug) console.log("Service reset! (" + port + ")");
   return res.status(200).send();
 });
 
 app.get('/kill', (req, res) => {
-  console.log("Process exiting! (" + port + ")");
+  if (config.debug) console.log("Process exiting! (" + port + ")");
   process.exit();
   return res.status(200).send();
 });

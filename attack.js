@@ -1,5 +1,6 @@
 const axios = require('axios');
 const config = require("./config");
+const fs = require('fs');
 
 var truePositives = 0;
 var falseNegatives = 0;
@@ -21,7 +22,17 @@ async function query(request, delay = 500) {
   }
 }
 
+async function wait(time) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve();
+    }, time);
+  });
+}
+
 (async () => {
+  await wait(config.attackStart);
+
   const leak = config.services[Math.floor(Math.random() * config.services.length)];
   const users = (await query(axios.get(leak.endpoint + '/leak'))).data.users;
   if (config.debug) console.log('Leaked data: ', users);
@@ -67,5 +78,7 @@ async function query(request, delay = 500) {
   }
   if (config.debug) console.log("TOTAL\t\t\t" + overallSuccessful + "\t" + overallFailed + "\t" + ((overallSuccessful / (overallSuccessful + overallFailed)) * 100) + "\n");
   console.log("True Positives: " + truePositives);
+  fs.appendFileSync('experiment.log', 'TP,' + truePositives + "\n");
   console.log("False Negatives: " + falseNegatives);
+  fs.appendFileSync('experiment.log', 'FN,' + falseNegatives + "\n");
 })();

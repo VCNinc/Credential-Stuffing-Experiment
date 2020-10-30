@@ -1,6 +1,7 @@
 module.exports = {
   "N": 1000,
   "services": [
+    {"endpoint": "http://localhost:3000", "popularity": Math.random()},
     {"endpoint": "http://localhost:3001", "popularity": Math.random()},
     {"endpoint": "http://localhost:3002", "popularity": Math.random()},
     {"endpoint": "http://localhost:3003", "popularity": Math.random()},
@@ -9,8 +10,7 @@ module.exports = {
     {"endpoint": "http://localhost:3006", "popularity": Math.random()},
     {"endpoint": "http://localhost:3007", "popularity": Math.random()},
     {"endpoint": "http://localhost:3008", "popularity": Math.random()},
-    {"endpoint": "http://localhost:3009", "popularity": Math.random()},
-    {"endpoint": "http://localhost:3010", "popularity": Math.random()}
+    {"endpoint": "http://localhost:3009", "popularity": Math.random()}
   ],
   "minLoginWait": 10000,
   "maxLoginWait": 50000,
@@ -18,5 +18,6 @@ module.exports = {
   "someReuse": 0.81,
   "someReusePortion": 0.50,
   "experimentDuration": 60000,
+  "attackStart": 30000,
   "debug": false
 };

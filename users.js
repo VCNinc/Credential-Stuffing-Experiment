@@ -1,5 +1,6 @@
 const axios = require('axios');
 const config = require("./config");
+const fs = require('fs');
 
 var trueNegatives = 0;
 var falsePositives = 0;
@@ -66,6 +67,13 @@ async function createUser() {
 }
 
 (async () => {
+  // Reset all services
+  for (let service of config.services) {
+    await query(axios.get(service.endpoint + '/reset'));
+    if (config.debug) console.log('Reset service: ' + service.endpoint);
+  }
+
+  // Create N users
   for (let i = 0; i < config.N; i++) {
     await createUser();
     if (config.debug) console.log('Created user (' + (i+1) + '/' + config.N + ')');
@@ -74,6 +82,8 @@ async function createUser() {
 
 setTimeout(() => {
   console.log('True Negatives: ' + trueNegatives);
+  fs.appendFileSync('experiment.log', 'TN,' + trueNegatives + "\n");
   console.log('False Positives: ' + falsePositives);
+  fs.appendFileSync('experiment.log', 'FP,' + falsePositives + "\n");
   process.exit();
 }, config.experimentDuration);
