@@ -1,21 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const port = process.env.PORT || 4000;
+const port = parseInt(process.argv[3]) || 4000;
 
-const popularity = Math.random();
+console.log(process.argv);
+
 var users = {};
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/info', (req, res) => {
-  return res.status(200).send({
-    popularity: popularity
-  });
-});
-
 app.post('/register', (req, res) => {
+  console.log(req.body);
   users[req.body.username] = req.body.password;
   console.log('Successful registration (' + req.body.username + ':' + req.body.password + ')');
   return res.status(200).send();
