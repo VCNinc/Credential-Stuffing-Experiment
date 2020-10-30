@@ -1,19 +1,16 @@
 const axios = require('axios');
+const config = require("./config");
 
-const N = 10;
-const services = [
-  {endpoint: 'http://localhost:100', popularity: Math.random()}
-];
-const minLoginWait = 1000;
-const maxLoginWait = 5000;
-const fullReuse = 0.59;
-const someReuse = 0.81;
-const someReusePortion = 0.50;
+var trueNegatives = 0;
+var falsePositives = 0;
 
 async function query(request, delay = 500) {
   try {
-    return await request;
+    let result = await request;
+    trueNegatives++;
+    return result;
   } catch (err) {
+    falsePositives++;
     return await new Promise((resolve, reject) => {
       setTimeout(() => {
         query(request, delay * 2).then((res) => {
@@ -30,14 +27,13 @@ async function createUser() {
   let character = Math.random();
   let myServices = [];
 
-  for (let service of services) {
+  for (let service of config.services) {
     if (Math.random() < service.popularity) {
-
       let password = '';
 
-      if (character < fullReuse) {
+      if (character < config.fullReuse) {
         password = onePassword;
-      } else if (character < someReuse && Math.random() < someReusePortion) {
+      } else if (character < config.someReuse && Math.random() < config.someReusePortion) {
         password = onePassword;
       } else {
         password = Math.random().toString(36).substring(7);
@@ -61,8 +57,8 @@ async function createUser() {
         username: username,
         password: service.password
       })).then(() => {
-        console.log('User ' + username + ' logged in successfully.');
-        setTimeout(login, minLoginWait + Math.random() * (maxLoginWait - minLoginWait));
+        if (config.debug) console.log('User ' + username + ' logged in successfully.');
+        setTimeout(login, config.minLoginWait + Math.random() * (config.maxLoginWait - config.minLoginWait));
       });
     }
   }
@@ -70,8 +66,14 @@ async function createUser() {
 }
 
 (async () => {
-  for (let i = 0; i < N; i++) {
+  for (let i = 0; i < config.N; i++) {
     await createUser();
-    console.log('Created user (' + (i+1) + '/' + N + ')');
+    if (config.debug) console.log('Created user (' + (i+1) + '/' + config.N + ')');
   }
 })();
+
+setTimeout(() => {
+  console.log('True Negatives: ' + trueNegatives);
+  console.log('False Positives: ' + falsePositives);
+  process.exit();
+}, config.experimentDuration);
