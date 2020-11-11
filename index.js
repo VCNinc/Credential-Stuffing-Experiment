@@ -53,10 +53,10 @@ app.post('/login', (req, res) => {
         return res.status(200).send({success: true});
       } else {
         if (config.debug) console.log('Failed login (' + req.body.username + ':' + req.body.password + ')');
-        return res.status(200).send({success: false});
+        return res.status(200).send({success: false, blocked: false});
       }
     } else {
-      return res.status(200).send({success: false});
+      return res.status(200).send({success: false, blocked: true});
     }
   });
 });
