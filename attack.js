@@ -81,4 +81,8 @@ async function wait(time) {
   fs.appendFileSync('experiment.log', 'TP,' + truePositives + "\n");
   console.log("False Negatives: " + falseNegatives);
   fs.appendFileSync('experiment.log', 'FN,' + falseNegatives + "\n");
+  console.log("Successful Attacks: " + overallSuccessful);
+  fs.appendFileSync('experiment.log', 'AS,' + overallSuccessful + "\n");
+  console.log("Failed Attacks: " + overallFailed);
+  fs.appendFileSync('experiment.log', 'AU,' + overallFailed + "\n");
 })();

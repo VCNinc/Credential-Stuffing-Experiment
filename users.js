@@ -40,26 +40,51 @@ async function createUser() {
         password = Math.random().toString(36).substring(7);
       }
 
-      await query(axios.post(service.endpoint + '/register', {
+      let result = await query(axios.post(service.endpoint + '/register', {
         username: username,
         password: password
       }));
-      myServices.push({
-        service: service,
-        password: password
-      });
+
+      if (result.data.success) {
+        myServices.push({
+          service: service,
+          password: password
+        });
+      } else {
+        password = Math.random().toString(36).substring(7);
+        await query(axios.post(service.endpoint + '/register', {
+          username: username,
+          password: password
+        }));
+        myServices.push({
+          service: service,
+          password: password
+        });
+      }
     }
   }
 
   function login() {
     if (myServices.length > 0) {
-      const service = myServices[Math.floor(Math.random() * myServices.length)];
+      let service = myServices[Math.floor(Math.random() * myServices.length)];
       query(axios.post(service.service.endpoint + '/login', {
         username: username,
         password: service.password
-      })).then(() => {
-        if (config.debug) console.log('User ' + username + ' logged in successfully.');
-        setTimeout(login, config.minLoginWait + Math.random() * (config.maxLoginWait - config.minLoginWait));
+      })).then((res) => {
+        if (res.data.success) {
+          if (config.debug) console.log('User ' + username + ' logged in successfully.');
+          setTimeout(login, config.minLoginWait + Math.random() * (config.maxLoginWait - config.minLoginWait));
+        } else {
+          setTimeout(() => {
+            service.password = Math.random().toString(36).substring(7);
+            query(axios.post(service.endpoint + '/register', {
+              username: username,
+              password: service.password
+            })).then(() => {
+              setTimeout(login, config.minLoginWait + Math.random() * (config.maxLoginWait - config.minLoginWait));
+            });
+          }, config.passwordChangeTime);
+        }
       });
     }
   }
@@ -67,6 +92,9 @@ async function createUser() {
 }
 
 (async () => {
+  // Reset central service
+  await axios.get(config.central + '/reset');
+
   // Reset all services
   for (let service of config.services) {
     await query(axios.get(service.endpoint + '/reset'));

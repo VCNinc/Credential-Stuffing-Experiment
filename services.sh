@@ -1,10 +1,8 @@
-node index.js --port 3000 &
-node index.js --port 3001 &
-node index.js --port 3002 &
-node index.js --port 3003 &
-node index.js --port 3004 &
-node index.js --port 3005 &
-node index.js --port 3006 &
-node index.js --port 3007 &
-node index.js --port 3008 &
-node index.js --port 3009 &
+
+
+for I in {3000..3009}
+do
+	echo
+	echo "STARTING SERVICE $I"
+	node index.js --port $I &
+done

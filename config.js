@@ -1,5 +1,6 @@
 module.exports = {
   "N": 1000,
+  "central": "http://localhost:4444",
   "services": [
     {"endpoint": "http://localhost:3000", "popularity": Math.random()},
     {"endpoint": "http://localhost:3001", "popularity": Math.random()},
@@ -17,7 +18,8 @@ module.exports = {
   "fullReuse": 0.59,
   "someReuse": 0.81,
   "someReusePortion": 0.50,
-  "experimentDuration": 60000,
-  "attackStart": 30000,
-  "debug": false
+  "experimentDuration": (2 * 60 * 1000),
+  "attackStart": (1 * 60 * 1000),
+  "debug": false,
+  "passwordChangeTime": 0
 };
